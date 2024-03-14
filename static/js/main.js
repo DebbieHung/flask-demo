@@ -16,6 +16,14 @@ $("#select_county").change(() => {
     drawCounty(county);
 });
 
+window.onresize = function () {
+    chart1.resize();
+    chart2.resize();
+    chart3.resize();
+};
+
+
+
 // 呼叫後端資料跟繪製
 drawPM25();
 // 取得後端資料
@@ -29,7 +37,7 @@ function drawCounty(county) {
             type: "GET",
             dataType: "json",
             success: (result) => {
-                drawChart(chart3, county, "PM2.5", result["site"], result["pm25"])
+                drawChart(chart3, county, "PM2.5", result["site"], result["pm25"], "#ffb6c1")
                 chart3.hideLoading();
             },
             error: () => {
@@ -53,7 +61,7 @@ function drawSix() {
             type: "GET",
             dataType: "json",
             success: (result) => {
-                drawChart(chart2, "六都PM2.5平均值", "PM2.5", result["site"], result["pm25"])
+                drawChart(chart2, "六都PM2.5平均值", "PM2.5", result["site"], result["pm25"], "#40e0d0")
                 chart2.hideLoading();
             },
             error: () => {
@@ -77,9 +85,9 @@ function drawPM25() {
             success: (result) => {
 
                 $("#pm25_high_site").text(result["highest"]["site"]);
-                $("#pm25_high_value").text("PM2.5 : " + result["highest"]["pm25"]);
+                $("#pm25_high_value").text(result["highest"]["pm25"]);
                 $("#pm25_low_site").text(result["lowest"]["site"]);
-                $("#pm25_low_value").text("PM2.5 : " + result["lowest"]["pm25"]);
+                $("#pm25_low_value").text(result["lowest"]["pm25"]);
 
                 // document.querySelector("#pm25_high_site").innerText = result["highest"]["site"]
                 // document.querySelector("#pm25_high_value").innerText = result["highest"]["pm25"]
@@ -88,7 +96,7 @@ function drawPM25() {
 
                 // console.log(result);
                 // 繪製對應區塊並給予必要參數
-                drawChart(chart1, result["datetime"], "PM2.5", result["site"], result["pm25"])
+                drawChart(chart1, result["datetime"], "PM2.5", result["site"], result["pm25"], "#e9967a")
                 chart1.hideLoading();
 
                 this.setTimeout(() => {
@@ -106,7 +114,7 @@ function drawPM25() {
     )
 }
 
-function drawChart(chart, title, legend, xData, yData) {
+function drawChart(chart, title, legend, xData, yData, color = '#a90000') {
     let option = {
         title: {
             text: title
@@ -123,7 +131,10 @@ function drawChart(chart, title, legend, xData, yData) {
             {
                 name: legend,
                 type: 'bar',
-                data: yData
+                data: yData,
+                itemStyle: {
+                    color: color
+                }
             }
         ]
     };
